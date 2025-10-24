@@ -111,6 +111,11 @@ public Action Command_ForceName(int client, int args){
 	
 	int iTarget = FindTarget(client, target, true, true);
 
+	if (!IsValidClient(iTarget) && IsClientSourceTV(client) && IsClientReplay(client)){
+		ReplyToCommand(client, "Invalid target");
+		return Plugin_Handled;
+	}
+
 	if (strcmp(newName, "STEAM2")==0)
 		GetClientAuthId(iTarget, AuthId_Steam2, newName, sizeof newName);
 	if(strcmp(newName, "STEAM3")==0)
@@ -191,6 +196,12 @@ public Action Command_UnBanName(int client, int args){
 	GetCmdArgString(fullArg, sizeof(fullArg));
 
 	int iTarget = FindTarget(client, fullArg, true, true);
+
+	if (!IsValidClient(iTarget) && IsClientSourceTV(client) && IsClientReplay(client)){
+		ReplyToCommand(client, "Invalid target");
+		return Plugin_Handled;
+	}
+
 	char authTarget[MAX_AUTHID_LENGTH];
 	GetClientAuthId(iTarget, AuthId_Steam2, authTarget, sizeof(authTarget));
 
@@ -342,5 +353,5 @@ bool GetCmdArgsTN(char[] input, char[] target, int targetS, char[] newName, int 
 }
 
 stock bool IsValidClient(int client) {
-	return (0 < client <= MAXPLAYERS && IsClientInGame(client) && !IsClientSourceTV(client) && !IsClientReplay(client));
+	return (0 < client <= MAXPLAYERS && IsClientInGame(client));
 }
