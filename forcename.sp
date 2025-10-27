@@ -89,7 +89,7 @@ public void SQL_ConnectorCallback(Database db, const char[] error, any data) {
   		`forcedName` VARCHAR(45) NOT NULL, \
   		`created` INT NOT NULL, \
   		`adminID` VARCHAR(45) NOT NULL, \
-  		PRIMARY KEY (`auth`)) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;");
+  		PRIMARY KEY (`auth`)) ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 }
 
 public void SQL_CreateTableCallback(Database db, DBResultSet results, const char[] error, any data) {
@@ -97,6 +97,7 @@ public void SQL_CreateTableCallback(Database db, DBResultSet results, const char
 		LogError(error);
 		return;
 	}
+	SQL_SetCharset(db, "utf8mb4");
 }
 
 public Action Command_ForceName(int client, int args){
@@ -110,11 +111,6 @@ public Action Command_ForceName(int client, int args){
 	}
 	
 	int iTarget = FindTarget(client, target, true, true);
-
-	if (!IsValidClient(iTarget) && IsClientSourceTV(client) && IsClientReplay(client)){
-		ReplyToCommand(client, "Invalid target");
-		return Plugin_Handled;
-	}
 
 	if (strcmp(newName, "STEAM2")==0)
 		GetClientAuthId(iTarget, AuthId_Steam2, newName, sizeof newName);
@@ -196,12 +192,6 @@ public Action Command_UnBanName(int client, int args){
 	GetCmdArgString(fullArg, sizeof(fullArg));
 
 	int iTarget = FindTarget(client, fullArg, true, true);
-
-	if (!IsValidClient(iTarget) && IsClientSourceTV(client) && IsClientReplay(client)){
-		ReplyToCommand(client, "Invalid target");
-		return Plugin_Handled;
-	}
-
 	char authTarget[MAX_AUTHID_LENGTH];
 	GetClientAuthId(iTarget, AuthId_Steam2, authTarget, sizeof(authTarget));
 
@@ -353,5 +343,5 @@ bool GetCmdArgsTN(char[] input, char[] target, int targetS, char[] newName, int 
 }
 
 stock bool IsValidClient(int client) {
-	return (0 < client <= MAXPLAYERS && IsClientInGame(client));
+	return (0 < client <= MAXPLAYERS && IsClientInGame(client) && !IsClientSourceTV(client) && !IsClientReplay(client));
 }
