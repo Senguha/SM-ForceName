@@ -333,7 +333,7 @@ bool GetCmdArgsTN(char[] input, char[] target, int targetS, char[] newName, int 
 	int iLen;
 	
 	if ((iLen = BreakString(input, target, targetS)) == -1){
-			strcopy(err, errS, "Usage: sm_forcename <target/STEAM2/STEAM3/STEAM64> [name]");
+			strcopy(err, errS, "Usage: sm_forcename <target> [name/STEAM2/STEAM3/STEAM64]");
 		return false;
 	}
 		
